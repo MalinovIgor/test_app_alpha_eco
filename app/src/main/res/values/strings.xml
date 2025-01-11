@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">test_app_alpha_eco</string>
+    <string name="card_number">Enter card number</string>
+    <string name="search">Search card</string>
+    <string name="history">Search history</string>
+</resources>

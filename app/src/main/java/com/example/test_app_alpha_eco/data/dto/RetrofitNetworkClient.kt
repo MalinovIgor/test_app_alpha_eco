@@ -35,8 +35,18 @@ class RetrofitNetworkClient(
             try {
                 apiService.getCardData(request.number).apply { code = HTTP_OK_CODE }
             } catch (e: HttpException) {
-                Log.e("some error in html", "$e")
-                Response().apply { code = HTTP_CODE_0 }
+                Log.e("Error in HTTP request", "$e")
+
+                when (e.code()) {
+                    TOO_MANY_REQUESTS -> {
+                        Log.e("limit", "Too many requests")
+                        Response().apply { code = TOO_MANY_REQUESTS }
+                    }
+
+                    else -> {
+                        Response().apply { code = HTTP_CODE_0 }
+                    }
+                }
             } catch (e: IOException) {
                 Log.e("error in fetching country regions", "$e")
                 Response().apply { code = HTTP_INTERNAL_SERVER_ERROR_CODE }

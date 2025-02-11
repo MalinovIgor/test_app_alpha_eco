@@ -1,11 +1,12 @@
 package com.example.test_app_alpha_eco.data.search
 
+import android.util.Log
 import com.example.test_app_alpha_eco.data.dto.RetrofitNetworkClient
 import com.example.test_app_alpha_eco.data.model.CardDto
 import com.example.test_app_alpha_eco.data.request.CardRequest
 import com.example.test_app_alpha_eco.data.response.CardResponse
 import com.example.test_app_alpha_eco.domain.NetworkClient
-import com.example.test_app_alpha_eco.domain.models.CardData
+import com.example.test_app_alpha_eco.domain.models.Card
 import com.example.test_app_alpha_eco.ui.CardDataError
 import com.example.test_app_alpha_eco.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +15,8 @@ import kotlinx.coroutines.flow.flow
 class SearchRepositoryImpl(
     private val networkClient: NetworkClient
 ) : SearchRepository {
-    override fun getCardData(number: Int): Flow<Resource<CardData>> = flow {
-        val response = networkClient.doRequest(CardRequest(number))
+    override fun getCardData(number: String): Flow<Resource<Card>> = flow {
+        val response = networkClient.doRequest(CardRequest(number = number))
         when (response.code) {
             RetrofitNetworkClient.INTERNET_NOT_CONNECTED -> {
                 emit(Resource.Error(CardDataError.NETWORK_ERROR))
@@ -34,7 +35,11 @@ class SearchRepositoryImpl(
             }
 
             RetrofitNetworkClient.HTTP_OK_CODE -> {
-                emit(Resource.Success(convertFromServerToAppEntity((response as CardResponse).data)))
+                if (response is CardDto) {
+                    emit(Resource.Success(convertFromServerToAppEntity(response)))
+                } else {
+                    emit(Resource.Error(CardDataError.UNKNOWN_ERROR))
+                }
             }
 
             else -> {
@@ -43,13 +48,17 @@ class SearchRepositoryImpl(
         }
     }
 
-    private fun convertFromServerToAppEntity(cardDataToConvert: CardDto): CardData {
-        return CardData(
-            scheme = cardDataToConvert.scheme,
-            type = cardDataToConvert.type,
-            brand = cardDataToConvert.brand,
-            country = cardDataToConvert.country,
-            bank = cardDataToConvert.bank
-        )
+    private fun convertFromServerToAppEntity(cardDataToConvert: CardDto?): Card {
+        return cardDataToConvert?.let {
+            Card(
+                number = it.number,
+                scheme = it.scheme,
+                type = it.type,
+                brand = it.brand,
+                prepaid = it.prepaid,
+                country = it.country,
+                bank = it.bank
+            )
+        }?: Card()
     }
 }

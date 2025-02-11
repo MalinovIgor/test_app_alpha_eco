@@ -5,5 +5,7 @@ enum class CardDataError {
     BAD_REQUEST,
     TOO_MANY_REQUESTS,
     UNKNOWN_ERROR,
-    SERVER_ERROR
+    SERVER_ERROR,
+    WRONG_INPUT,
+    NORMAL_CONDITION,
 }

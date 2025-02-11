@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">test_app_alpha_eco</string>
-    <string name="card_number">Enter card number</string>
-    <string name="search">Search card</string>
+    <string name="card_number">Enter number</string>
+    <string name="go">go</string>
     <string name="history">Search history</string>
+    <string name="clear">clear</string>
+    <string name="error_internet">Error internet</string>
+    <string name="error_server">Error server</string>
+    <string name="too_many_requests_try_later">Too many requests, try later</string>
+    <string name="not_found">Not Found</string>
+    <string name="country">"Country: "</string>
+    <string name="bank_name">"Bank name: "</string>
+    <string name="card_type">"Card type: "</string>
+    <string name="coordinates">"Coordinates: "</string>
 </resources>

@@ -3,4 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="material_dynamic_neutral40">#5D5E64</color>
+    <color name="red">#BB0D00</color>
 </resources>

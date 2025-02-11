@@ -4,4 +4,6 @@
     <dimen name="margin32">32dp</dimen>
     <dimen name="dp8">8dp</dimen>
     <dimen name="dp52">52dp</dimen>
+    <dimen name="dp16">16dp</dimen>
+    <dimen name="sp18">18sp</dimen>
 </resources>

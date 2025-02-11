@@ -5,11 +5,13 @@ import android.net.NetworkCapabilities
 import android.util.Log
 import com.example.test_app_alpha_eco.data.Response
 import com.example.test_app_alpha_eco.data.request.CardRequest
+import com.example.test_app_alpha_eco.data.response.CardResponse
 import com.example.test_app_alpha_eco.domain.NetworkClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.SocketTimeoutException
 
 class RetrofitNetworkClient(
     private val connectivityManager: ConnectivityManager,
@@ -33,23 +35,24 @@ class RetrofitNetworkClient(
     private suspend fun getCardData(request: CardRequest): Response {
         return withContext(Dispatchers.IO) {
             try {
-                apiService.getCardData(request.number).apply { code = HTTP_OK_CODE }
-            } catch (e: HttpException) {
-                Log.e("Error in HTTP request", "$e")
+                apiService.getCardData(request.number.toInt()).apply { code = HTTP_OK_CODE }
 
+
+            } catch (e: HttpException) {
                 when (e.code()) {
                     TOO_MANY_REQUESTS -> {
-                        Log.e("limit", "Too many requests")
-                        Response().apply { code = TOO_MANY_REQUESTS }
+                        return@withContext Response().apply { code = TOO_MANY_REQUESTS }
                     }
-
                     else -> {
-                        Response().apply { code = HTTP_CODE_0 }
+                        return@withContext Response().apply { code = HTTP_CODE_0 }
                     }
                 }
+            } catch (e: SocketTimeoutException) {
+                Log.e("error in IO", "socket timeout error is  $e")
+                return@withContext Response().apply { code = HTTP_INTERNAL_SERVER_ERROR_CODE }
             } catch (e: IOException) {
-                Log.e("error in fetching country regions", "$e")
-                Response().apply { code = HTTP_INTERNAL_SERVER_ERROR_CODE }
+                Log.e("error in IO", "error is  $e")
+                return@withContext Response().apply { code = HTTP_INTERNAL_SERVER_ERROR_CODE }
             }
         }
     }
